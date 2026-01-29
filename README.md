@@ -161,9 +161,6 @@ Choose the size unit KB or MB (type 'exit' to quit):
 
 ---
 
-## 📁 Output (ok, só pequeno reforço)
-
-```md
 ## 📁 Output
 
 - All generated files are saved in the `attachmentsTest` directory.
