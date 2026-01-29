@@ -157,9 +157,7 @@ Choose the file type (txt, docx, xlsx, pptx, pdf, img): pptx
 📦 Final size: 5347737 bytes
 
 Choose the size unit KB or MB (type 'exit' to quit):
-
-
----
+```
 
 ## 📁 Output
 
