@@ -69,7 +69,9 @@ def generate_pptx(filename, target_size):
     with Halo(text="📽️ Generating PPTX...", spinner="dots"):
         prs = Presentation()
         slide = prs.slides.add_slide(prs.slide_layouts[5])
-        slide.shapes.title = None
+        title = slide.shapes.title
+        if title:
+            title.text = "..."
         prs.save(filename)
         pad_file_to_exact_size(filename, target_size)
 
@@ -98,57 +100,129 @@ def generate_image(filename, target_size):
         img.save(filename, format="PNG")
         pad_file_to_exact_size(filename, target_size)
 
+def print_banner():
+    print("==============================================")
+    print("🚀  CREATE ATTACHMENTS")
+    print("👨‍💻  Developed by Diego Garcia Saltori")
+    print("==============================================")
+    print()
+
+
+def print_info():
+    print("=" * 50)
+    print("ℹ️  How size input works")
+    print()
+    print("📦 KB (Kilobytes)")
+    print("   • Accepts INTEGER values only")
+    print("   • Example: 10 KB, 256 KB")
+    print()
+    print("📦 MB (Megabytes)")
+    print("   • Accepts INTEGER or FLOAT values")
+    print("   • Example: 5 MB, 5.1 MB, 0.5 MB")
+    print()
+    print("⚠️  Note:")
+    print("   • File size is calculated using base 1024")
+    print("   • The final file size will be EXACT in bytes")
+    print("=" * 50)
+    print()
+
 
 # =========================
 # Main
 # =========================
 
 def main():
-    unit = input("Choose the size unit (KB/MB): ").strip().upper()
-    if unit not in {"KB", "MB"}:
-        print("❌ Invalid unit!")
-        return
+    print_banner()
+    print_info()
 
-    size = int(input("Enter the file size (>= 1): "))
-    if size < 1:
-        print("❌ Size must be >= 1!")
-        return
+    while True: 
+        # =========================
+        # Unit selection
+        # =========================
+        while True:
+            unit = input(
+                "Choose the size unit KB or MB (type 'exit' to quit): "
+            ).strip().upper()
 
-    file_type = input(
-        "Choose the file type (txt, docx, xlsx, pptx, pdf, img): "
-    ).strip().lower()
+            if unit == "EXIT":
+                print("👋 Exiting Create Attachments. Bye!")
+                return
 
-    generators = {
-        "txt": generate_txt,
-        "docx": generate_docx,
-        "xlsx": generate_xlsx,
-        "pptx": generate_pptx,
-        "pdf": generate_pdf,
-        "img": generate_image,
-    }
+            if unit in {"KB", "MB"}:
+                break
 
-    if file_type not in generators:
-        print("❌ Invalid file type!")
-        return
+            print("❌ Invalid unit! Please choose KB or MB.")
 
-    target_size_bytes = size * 1024 if unit == "KB" else size * 1024 * 1024
+        # =========================
+        # Size input
+        # =========================
+        try:
+            raw_size = input("Enter the file size: ").strip().replace(",", ".")
 
-    directory = ensure_directory()
-    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            if unit == "KB":
+                if "." in raw_size:
+                    print("❌ KB only accepts integer values (e.g., 10 KB).")
+                    continue  # ⬅ volta para o início do loop principal
+                size = int(raw_size)
+            else:  # MB
+                size = float(raw_size)
 
-    extension = "png" if file_type == "img" else file_type
-    filename = os.path.join(
-        directory,
-        f"documentTest_{size}{unit}_{timestamp}.{extension}"
-    )
+        except ValueError:
+            print("❌ Invalid size value!")
+            continue
 
-    try:
-        generators[file_type](filename, target_size_bytes)
-        print(f"🎉 File generated successfully!")
-        print(f"📦 Final size: {os.path.getsize(filename)} bytes")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+        if size <= 0:
+            print("❌ Size must be greater than 0!")
+            continue
 
+        # =========================
+        # Convert to bytes
+        # =========================
+        target_size_bytes = (
+            size * 1024 if unit == "KB"
+            else int(size * 1024 * 1024)
+        )
+
+        # =========================
+        # File type
+        # =========================
+        file_type = input(
+            "Choose the file type (txt, docx, xlsx, pptx, pdf, img): "
+        ).strip().lower()
+
+        generators = {
+            "txt": generate_txt,
+            "docx": generate_docx,
+            "xlsx": generate_xlsx,
+            "pptx": generate_pptx,
+            "pdf": generate_pdf,
+            "img": generate_image,
+        }
+
+        if file_type not in generators:
+            print("❌ Invalid file type!")
+            continue
+
+        # =========================
+        # File creation
+        # =========================
+        directory = ensure_directory()
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
+        extension = "png" if file_type == "img" else file_type
+        filename = os.path.join(
+            directory,
+            f"documentTest_{size}{unit}_{timestamp}.{extension}"
+        )
+
+        try:
+            generators[file_type](filename, target_size_bytes)
+            print("🎉 File generated successfully!")
+            print(f"📦 Final size: {os.path.getsize(filename)} bytes")
+            print()  
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            continue
 
 if __name__ == "__main__":
     main()

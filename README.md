@@ -1,16 +1,23 @@
-# Test Document Generator Script
+# Attachment Test File Generator
 
-This script generates test documents of various types (TXT, DOCX, XLSX, PPTX, PDF, and Images) with a customizable file size. The file can be generated in either KB or MB units. The generated file will be saved in the `attachmentsTest` directory with a unique name based on the size and current timestamp.
+This script generates test documents of various types (TXT, DOCX, XLSX, PPTX, PDF, and Images) with an exact and deterministic file size.
+The file size can be defined in KB or MB, and the script guarantees the final size in bytes, regardless of file format or compression.
 
 ## Features
-- Choose the desired file size in KB or MB.
-- Choose the file type (TXT, DOCX, XLSX, PPTX, PDF, or Image).
-- The script will generate random content in the file until it reaches the specified size.
-- Emojis and loading indicators are displayed for better user experience.
+- Generate files with an **exact size in bytes**.
+- Size unit selection:
+  - **KB** → integer values only
+  - **MB** → integer or float values (e.g. 5.1 MB)
+- Interactive CLI mode (generate multiple files in one execution).
+- Type `exit` at any prompt to quit the script.
+- Supports TXT, DOCX, XLSX, PPTX, PDF, and PNG image files.
+- Visual feedback with spinners and emojis.
 
 ---
 
-##### **Note:** The larger the file size, the longer it will take to generate the file. Larger files require more time to create due to the increased amount of content being written.
+##### **Note:**
+File generation time may increase for very large files.
+The script uses a binary padding strategy to ensure exact file size, avoiding inconsistencies caused by compression or metadata.
 
 ---
 
@@ -22,44 +29,160 @@ This script generates test documents of various types (TXT, DOCX, XLSX, PPTX, PD
 - **PDF**: PDF file with pages filled with random text.
 - **Image**: PNG image with random colors.
 
-## How to Use
+---
 
-1. Clone or download this repository.
-2. Install the required libraries:
-   - `pip install halo`
-   - `pip install python-docx`
-   - `pip install openpyxl`
-   - `pip install python-pptx`
-   - `pip install fpdf`
-   - `pip install pillow`
-3. Run the script using Python:
-   - `python createAttachments.py`
+## 🚀 How to Use
 
-## Interaction
+### 1️⃣ Clone or download the repository
 
-When running the script, you will be prompted to provide the following inputs:
-1. **Choose the size unit (KB/MB)**: Select between KB or MB to define the file size.
-2. **Enter the file size (>= 0)**: Enter the size of the file you wish to generate (must be >= 0).
-3. **Choose the file type (txt, docx, xlsx, pptx, pdf, img)**: Select the type of file you want to generate.
+You can either **download the ZIP** or **clone using Git**:
 
-The script will then generate the file with random content until the specified size is reached. It will display a loading indicator and success message with an emoji for better feedback.
-
-## Example Output
+**Download ZIP**
 
 ```
-Choose the size unit (KB/MB): KB
-Enter the file size (>= 0): 4000
-Choose the file type (txt, docx, xlsx, pptx, pdf, img): pdf
-📑 Generating PDF file... ✅ PDF file generated!
-🎉 File attachmentsTest/documentTest_4000KB_20250401120313.pdf generated successfully!
+https://github.com/diegosaltori/createAttachments/archive/refs/heads/main.zip
 ```
 
-The file will be saved in the `attachmentsTest` directory with the name `documentTest_{size}{unit}_{timestamp}.{file_type}`.
+**Clone with Git**
+
+```bash
+git clone https://github.com/diegosaltori/createAttachments.git
+```
+
+Then access the project folder:
+
+```bash
+cd createAttachments
+```
+
+---
+
+### 2️⃣ Install the required dependencies
+
+Make sure you have **Python 3.8+** installed.
+
+Install all dependencies using `pip`:
+
+```bash
+pip install halo python-docx openpyxl python-pptx fpdf pillow
+```
+
+> 💡 Tip: You can also install them one by one if needed:
+
+```bash
+pip install halo
+pip install python-docx
+pip install openpyxl
+pip install python-pptx
+pip install fpdf
+pip install pillow
+```
+
+---
+
+### 3️⃣ Run the script
+
+Execute the script with Python:
+
+```bash
+python createAttachments.py
+```
+
+Follow the on-screen instructions to choose:
+
+* File size unit (KB or MB)
+* File size
+* File type (txt, docx, xlsx, pptx, pdf, img)
+
+---
+
+## ⚙️ How the Script Works
+
+When you run the script, it interacts with you via the terminal and guides you step by step to generate a file with an **exact size in bytes**, based on your input.
+
+### 🔹 User Inputs
+
+During execution, you will be prompted to provide the following information:
+
+1. **Size unit (KB or MB)**  
+   Defines how the file size will be calculated.
+
+   - `KB` → Integer values only (e.g. `10 KB`)
+   - `MB` → Integer or floating-point values (e.g. `5 MB`, `5.1 MB`)
+
+2. **File size**
+   The numeric value for the selected unit.
+
+   Examples:
+   - `10` + `MB` → exactly 10 MB
+   - `5.1` + `MB` → exactly 5.1 MB
+   - `256` + `KB` → exactly 256 KB
+
+3. **File type**
+   Choose one of the supported formats:
+   - `txt`, `docx`, `xlsx`, `pptx`, `pdf`, `img`
+
+---
+
+## 🧠 Internal Behavior
+
+After receiving the input, the script:
+
+1. Creates a **valid minimal file** for the chosen format.
+2. Converts the user-defined size into **exact bytes** using base 1024.
+3. Applies a **binary padding strategy** to reach the exact target size.
+4. Ensures the final file size matches the requested value precisely.
+5. Returns to the initial prompt, allowing the user to generate additional files.
+
+This approach guarantees deterministic file sizes and avoids issues caused by compression or internal metadata.
+
+## 🔁 Interactive Mode
+
+The script runs in an interactive loop.
+
+- After generating a file, it returns to the size unit selection.
+- You can generate multiple files in a single execution.
+- Type `exit` at any prompt to terminate the script gracefully.
+
+---
+
+## 📌 Example Execution
+
+```text
+Choose the size unit KB or MB (type 'exit' to quit): MB
+Enter the file size: 5.1
+Choose the file type (txt, docx, xlsx, pptx, pdf, img): pptx
+📽️ Generating PPTX...
+🎉 File generated successfully!
+📦 Final size: 5347737 bytes
+
+Choose the size unit KB or MB (type 'exit' to quit):
+
+
+---
+
+## 📁 Output (ok, só pequeno reforço)
+
+```md
+## 📁 Output
+
+- All generated files are saved in the `attachmentsTest` directory.
+- Files are named using the following pattern:
+
+```
+documentTest_{size}{unit}_{timestamp}.{extension}
+```
+
+**Example:**
+
+```
+documentTest_4000KB_20260129123045.pdf
+```
 
 ## Directory Structure
 
 ```
-your_project_directory/
+createAttachments/
 │
 ├── createAttachments.py  # The main script file.
 └── attachmentsTest/      # The folder where generated files will be stored.
