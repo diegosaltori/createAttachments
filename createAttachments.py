@@ -9,7 +9,6 @@ from pptx import Presentation
 from fpdf import FPDF
 from PIL import Image
 
-
 # =========================
 # Utils
 # =========================
@@ -19,10 +18,8 @@ def ensure_directory():
     os.makedirs(directory, exist_ok=True)
     return directory
 
-
 def generate_random_text(size):
     return ''.join(random.choices(string.ascii_letters + string.digits + ' ', k=size))
-
 
 def pad_file_to_exact_size(filename, target_size_bytes):
     current_size = os.path.getsize(filename)
@@ -36,7 +33,6 @@ def pad_file_to_exact_size(filename, target_size_bytes):
     with open(filename, "ab") as f:
         f.write(b'\0' * (target_size_bytes - current_size))
 
-
 # =========================
 # Generators
 # =========================
@@ -47,14 +43,12 @@ def generate_txt(filename, target_size):
             f.write(generate_random_text(100))
         pad_file_to_exact_size(filename, target_size)
 
-
 def generate_docx(filename, target_size):
     with Halo(text="📄 Generating DOCX...", spinner="dots"):
         doc = Document()
         doc.add_paragraph("Test document")
         doc.save(filename)
         pad_file_to_exact_size(filename, target_size)
-
 
 def generate_xlsx(filename, target_size):
     with Halo(text="📊 Generating XLSX...", spinner="dots"):
@@ -63,7 +57,6 @@ def generate_xlsx(filename, target_size):
         ws.append(["Test"])
         wb.save(filename)
         pad_file_to_exact_size(filename, target_size)
-
 
 def generate_pptx(filename, target_size):
     with Halo(text="📽️ Generating PPTX...", spinner="dots"):
@@ -75,7 +68,6 @@ def generate_pptx(filename, target_size):
         prs.save(filename)
         pad_file_to_exact_size(filename, target_size)
 
-
 def generate_pdf(filename, target_size):
     with Halo(text="📑 Generating PDF...", spinner="dots"):
         pdf = FPDF()
@@ -84,7 +76,6 @@ def generate_pdf(filename, target_size):
         pdf.cell(0, 10, "Test PDF")
         pdf.output(filename)
         pad_file_to_exact_size(filename, target_size)
-
 
 def generate_image(filename, target_size):
     with Halo(text="🖼️ Generating PNG...", spinner="dots"):
@@ -100,13 +91,16 @@ def generate_image(filename, target_size):
         img.save(filename, format="PNG")
         pad_file_to_exact_size(filename, target_size)
 
+# =========================
+# Banners
+# =========================
+
 def print_banner():
     print("==============================================")
     print("🚀  CREATE ATTACHMENTS")
     print("👨‍💻  Developed by Diego Garcia Saltori")
     print("==============================================")
     print()
-
 
 def print_info():
     print("=" * 50)
@@ -125,7 +119,6 @@ def print_info():
     print("   • The final file size will be EXACT in bytes")
     print("=" * 50)
     print()
-
 
 # =========================
 # Main
@@ -162,7 +155,7 @@ def main():
             if unit == "KB":
                 if "." in raw_size:
                     print("❌ KB only accepts integer values (e.g., 10 KB).")
-                    continue  # ⬅ volta para o início do loop principal
+                    continue  
                 size = int(raw_size)
             else:  # MB
                 size = float(raw_size)
