@@ -19,7 +19,7 @@ class Utils():
 
         if current_size > target_size_bytes:
             raise ValueError(
-                f"Arquivo já maior que o tamanho desejado "
+                f"File already larger than desired size."
                 f"({current_size} > {target_size_bytes})"
             )
 
